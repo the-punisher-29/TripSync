@@ -1,13 +1,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:gravity="center">
 
+    <!-- App Name -->
     <TextView
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TripSync"
         android:textSize="24sp"
-        android:layout_centerInParent="true"/>
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+    <!-- Rotating Circle -->
+    <ProgressBar
+        android:id="@+id/rotating_circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:layout_marginTop="16dp"
+        android:layout_below="@id/app_name"/>
 </RelativeLayout>
