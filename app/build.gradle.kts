@@ -53,7 +53,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation ("com.google.firebase:firebase-auth:21.0.1")
-    implementation ("com.google.android.gms:play-services-auth:19.2.0")
+    implementation ("com.google.android.gms:play-services-auth:21.0.1")
     implementation ("androidx.appcompat:appcompat:1.3.1")
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
@@ -63,5 +63,7 @@ dependencies {
     implementation ("org.osmdroid:osmdroid-android:6.1.10")
 
 
+
 }
+
 
