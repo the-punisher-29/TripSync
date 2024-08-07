@@ -41,11 +41,11 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
  ```
 
 
-##Configuring Firebase
+## Configuring Firebase
 
-###Create a Firebase Project
--Go to the Firebase Console.
--Create a new project if you haven’t already.
+### Create a Firebase Project
+- Go to the Firebase Console.
+- Create a new project if you haven’t already.
 
 ### Add Your App to Firebase
 
