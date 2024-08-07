@@ -47,7 +47,6 @@
         <!-- Review Activity -->
         <activity android:name=".ReviewActivity" />
 
-        <activity android:name=".com.sk.tripsync.CompanionActivity"/>
         <activity android:name=".FeedbackActivity"/>
 
 
