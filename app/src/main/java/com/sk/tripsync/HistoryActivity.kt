@@ -30,13 +30,13 @@ class HistoryActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Sample data
+        // Sample data with prices
         trips = listOf(
-            Trip("1", "Arman Gupta", "+1234567890", "CAB123", true),
-            Trip("2", "Hritin Raj", "+0987654321", "CAB456", false),
-            Trip("3", "Akash Jatt", "+0987654321", "CAB456", false),
-            Trip("4", "Prem Kumar", "+0987654321", "CAB456", false),
-            Trip("5", "Harsh Singh", "+0987654321", "CAB456", false),
+            Trip("1", "Arman Gupta", "+1234567890", "CAB123", true, 250.0),
+            Trip("2", "Hritin Raj", "+0987654321", "CAB456", false, 300.0),
+            Trip("3", "Akash Jatt", "+0987654321", "CAB456", false, 275.0),
+            Trip("4", "Prem Kumar", "+0987654321", "CAB456", false, 320.0),
+            Trip("5", "Harsh Singh", "+0987654321", "CAB456", false, 290.0),
             // Add more trips as needed
         )
 
@@ -90,13 +90,14 @@ class HistoryActivity : AppCompatActivity() {
         }
     }
 
-
     private fun shareTripDetails(trip: Trip) {
         val tripDetails = "Trip ID: ${trip.tripId}\n" +
                 "Driver: ${trip.driverName}\n" +
                 "Phone: ${trip.driverPhoneNumber}\n" +
                 "Cab No: ${trip.cabNumber}\n" +
-                "Status: ${if (trip.isOngoing) "Ongoing" else "Completed"}"
+                "Status: ${if (trip.isOngoing) "Ongoing" else "Completed"}\n" +
+                "Price: ₹${trip.price}\n" + // Include price in details
+                "Use the trip ID to track the shared ride."
 
         // Copy to clipboard
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -105,5 +106,5 @@ class HistoryActivity : AppCompatActivity() {
 
         // Open the messaging app with the trip details
         openMessagingApp(tripDetails)
-    }}
-
+    }
+}

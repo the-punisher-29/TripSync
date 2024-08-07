@@ -12,38 +12,37 @@ data class Trip(
     val driverName: String,
     val driverPhoneNumber: String,
     val cabNumber: String,
-    val isOngoing: Boolean
+    val isOngoing: Boolean,
+    val price: Double // New property for price
 )
 
-class TripAdapter(private val trips: List<Trip>) : RecyclerView.Adapter<TripAdapter.TripViewHolder>() {
+class TripAdapter(private val trips: List<Trip>) :
+    RecyclerView.Adapter<TripAdapter.TripViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_trip, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.ride_item, parent, false)
         return TripViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TripViewHolder, position: Int) {
         val trip = trips[position]
-        holder.tripIdTextView.text = "Trip ID: ${trip.tripId}"
-        holder.driverNameTextView.text = "Driver: ${trip.driverName}"
-        holder.driverPhoneNumberTextView.text = "Phone: ${trip.driverPhoneNumber}"
-        holder.cabNumberTextView.text = "Cab No: ${trip.cabNumber}"
+        holder.bind(trip)
+    }
 
-        if (trip.isOngoing) {
-            holder.itemView.setBackgroundColor(Color.parseColor("#E0F2F1")) // Light green background for ongoing trips
-        } else {
-            holder.itemView.setBackgroundColor(Color.WHITE) // Default background
+    override fun getItemCount(): Int = trips.size
+
+    class TripViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val textName: TextView = itemView.findViewById(R.id.text_name)
+        private val textStartEnd: TextView = itemView.findViewById(R.id.text_start_end)
+        private val textFare: TextView = itemView.findViewById(R.id.text_fare)
+        private val textDate: TextView = itemView.findViewById(R.id.text_date)
+
+        fun bind(trip: Trip) {
+            textName.text = "Driver: ${trip.driverName}"
+            textStartEnd.text = "Cab No: ${trip.cabNumber}"
+            textFare.text = "Price: ₹${trip.price}" // Updated to show price
+            textDate.text = "Status: ${if (trip.isOngoing) "Ongoing" else "Completed"}"
         }
-    }
-
-    override fun getItemCount(): Int {
-        return trips.size
-    }
-
-    inner class TripViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tripIdTextView: TextView = itemView.findViewById(R.id.text_trip_id)
-        val driverNameTextView: TextView = itemView.findViewById(R.id.text_driver_name)
-        val driverPhoneNumberTextView: TextView = itemView.findViewById(R.id.text_driver_phone_number)
-        val cabNumberTextView: TextView = itemView.findViewById(R.id.text_cab_number)
     }
 }

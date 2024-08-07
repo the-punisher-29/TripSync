@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.osmdroid.api.IMapController
@@ -28,6 +29,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import kotlin.math.sqrt
+import java.util.UUID
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+
 
 private fun getBoundingBox(geoPoints: List<GeoPoint>): BoundingBox {
     val minLat = geoPoints.minOf { it.latitude }
@@ -50,10 +56,10 @@ interface OpenRouteServiceApi {
 class TravelerActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
-    private val OPEN_ROUTE_SERVICE_API_KEY = "5b3ce3597851110001cf6248cb359a7eb3e34fae854bc8397565d55d"
+    private val OPEN_ROUTE_SERVICE_API_KEY = "YOUR_API_KEY"
     private val TAG = "TravelerActivity"
     private val NUMBER_OF_CABS = 7
-
+    private val trips = mutableMapOf<String, Pair<GeoPoint, GeoPoint>>()
     private val service: OpenRouteServiceApi by lazy {
         Retrofit.Builder()
             .baseUrl("https://api.openrouteservice.org/")
@@ -66,7 +72,6 @@ class TravelerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_traveler)
 
-        // Set user agent for osmdroid
         Configuration.getInstance().userAgentValue = "MyAppName/1.0"
 
         mapView = findViewById(R.id.map_view)
@@ -76,12 +81,10 @@ class TravelerActivity : AppCompatActivity() {
 
         val mapController: IMapController = mapView.controller
 
-        // Coordinates for Patna, Bihar, India
         val patna = GeoPoint(25.5941, 85.1376)
         mapController.setCenter(patna)
         mapController.setZoom(13.0)
 
-        // Retrieve coordinates from intent
         val fromLatitude = intent.getDoubleExtra("START_LATITUDE", 0.0)
         val fromLongitude = intent.getDoubleExtra("START_LONGITUDE", 0.0)
         val toLatitude = intent.getDoubleExtra("END_LATITUDE", 0.0)
@@ -91,19 +94,21 @@ class TravelerActivity : AppCompatActivity() {
             val startPoint = GeoPoint(fromLatitude, fromLongitude)
             val endPoint = GeoPoint(toLatitude, toLongitude)
 
-            // Place markers and fetch route
             placeMarker(startPoint, "Start Point")
             placeMarker(endPoint, "Destination")
             fetchRoute(startPoint, endPoint)
 
-            // Generate and display cabs
             val cabs = generateDummyCabs(startPoint)
             displayCabs(cabs, startPoint)
-        } else {
-            Toast.makeText(this, "Invalid coordinates provided", Toast.LENGTH_SHORT).show()
+
+            // Generate and store trip ID
+            val tripId = UUID.randomUUID().toString()
+            trips[tripId] = Pair(startPoint, endPoint)
+            Toast.makeText(this, "Trip ID: $tripId", Toast.LENGTH_LONG).show()
+            copyTripIdToClipboard(tripId)
+
         }
 
-        // Set up buttons
         val buttonFeed: Button = findViewById(R.id.button_feed)
         val buttonHistory: Button = findViewById(R.id.button_history)
 
@@ -117,6 +122,28 @@ class TravelerActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+    private fun copyTripIdToClipboard(tripId: String) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Trip ID", tripId)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, "Trip ID copied to clipboard", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun calculateDistanceAndPrice(startPoint: GeoPoint, destination: GeoPoint): Pair<Double, Double> {
+        val distance = calculateDistance(startPoint, destination)
+        val pricePerKm = 10.0 // Rs 10 per kilometer
+        val price = distance / 1000 * pricePerKm // Convert meters to kilometers
+        return Pair(distance, price)
+    }
+
+    private fun displayDistanceAndPrice(distance: Double, price: Double) {
+        val distanceText = "Distance: %.2f km".format(distance / 1000)
+        val priceText = "Price: Rs %.2f".format(price)
+        val distancePriceTextView: TextView = findViewById(R.id.text_view_distance_price)
+        distancePriceTextView.text = "$distanceText\n$priceText"
+    }
+
+
 
     private fun fetchRoute(pickup: GeoPoint, destination: GeoPoint) {
         val call = service.getDirections(
@@ -149,6 +176,10 @@ class TravelerActivity : AppCompatActivity() {
                         // Adjust the map to fit the route
                         val boundingBox = BoundingBox.fromGeoPoints(geoPoints)
                         mapView.zoomToBoundingBox(boundingBox, true)
+
+                        // Calculate and display distance and price
+                        val (distance, price) = calculateDistanceAndPrice(pickup, destination)
+                        displayDistanceAndPrice(distance, price)
                     } else {
                         Log.e(TAG, "No coordinates found in the response")
                     }
@@ -162,6 +193,7 @@ class TravelerActivity : AppCompatActivity() {
             }
         })
     }
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun placeMarker(location: GeoPoint, title: String, icon: Drawable? = null) {
