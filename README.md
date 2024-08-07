@@ -7,7 +7,7 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
 ## Features
 
 ### Traveler
-- **Share Ride Details**: Share ride details such as TripId, Driver Name, Driver Phone Number, and cab number through WhatsApp or SMS. The shared link expires after the trip is complete.
+- **Share Ride Details**: Share ride details such as TripId, Driver Name, Driver Phone Number, and cab number through  SMS. The shared link expires after the trip is complete.
 - **Audit Trail**: View an audit trail of the rides shared.
 
 ### Traveler Companion
@@ -47,15 +47,15 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
 - Go to the Firebase Console.
 - Create a new project if you haven’t already.
 
-### Add Your App to Firebase
+### Add the App to Firebase
 
 - In the Firebase Console, select your project.
 - Click on the “Add app” button.
-- Choose the Android platform and follow the instructions to register your app.
-- Download the google-services.json file and place it in the app/ directory of your Android project.
+- Choose the Android platform and follow the instructions to register the app.
+- Download the google-services.json file and place it in the app/ directory of the Android project.
 
 ### Add Firebase Dependencies
-- In your project-level build.gradle file, add the Google services classpath in the dependencies section:
+- In the project-level build.gradle file, add the Google services classpath in the dependencies section:
 
  ```bash
 gradle
@@ -66,7 +66,7 @@ buildscript {
 }
  ```
 
-In your app-level build.gradle file, apply the Google services plugin and add the Firebase dependencies:
+In the app-level build.gradle file, apply the Google services plugin and add the Firebase dependencies:
 
 ```bash
 gradle
@@ -89,7 +89,7 @@ dependencies {
 - Ensure you have configured Firebase Authentication in the Firebase Console. Enable Google Sign-In and any other authentication providers you plan to use.
 
 ### Database Setup
-- Configure Firebase Realtime Database rules and structure according to your project needs.
+- Configure Firebase Realtime Database rules and structure according to the project needs.
 
 ##Contributing
 If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes.
