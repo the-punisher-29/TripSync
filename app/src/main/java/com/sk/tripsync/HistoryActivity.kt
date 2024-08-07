@@ -32,7 +32,7 @@ class HistoryActivity : AppCompatActivity() {
 
         // Sample data with prices
         trips = listOf(
-            Trip("1d2ff", "Arman Gupta", "+91285655654", "CAB123", true, 250.0),
+            Trip("1d2ff", "Arman Gupta", "+912856556545", "CAB123", true, 250.0),
             Trip("2e4gg", "Hritin Raj", "+914587698425", "CAB456", false, 300.0),
             Trip("3f4tt", "Akash Jatt", "+914575325878", "CAB789", false, 275.0),
             Trip("4g5yy", "Prem Kumar", "+919875645154", "CAB987", false, 320.0),
