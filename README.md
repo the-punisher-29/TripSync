@@ -46,13 +46,16 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
 ###Create a Firebase Project
 -Go to the Firebase Console.
 -Create a new project if you haven’t already.
-###Add Your App to Firebase
--In the Firebase Console, select your project.
--Click on the “Add app” button.
--Choose the Android platform and follow the instructions to register your app.
--Download the google-services.json file and place it in the app/ directory of your Android project.
-###Add Firebase Dependencies
--In your project-level build.gradle file, add the Google services classpath in the dependencies section:
+
+### Add Your App to Firebase
+
+- In the Firebase Console, select your project.
+- Click on the “Add app” button.
+- Choose the Android platform and follow the instructions to register your app.
+- Download the google-services.json file and place it in the app/ directory of your Android project.
+
+### Add Firebase Dependencies
+- In your project-level build.gradle file, add the Google services classpath in the dependencies section:
 
  ```bash
 gradle
@@ -77,16 +80,16 @@ dependencies {
 }
  ```
 
-###Running the Project
--Open the project in Android Studio.
--Click “Sync Now” to sync Gradle files.
--Connect an Android device or start an emulator and run the app.
+### Running the Project
+- Open the project in Android Studio.
+- Click “Sync Now” to sync Gradle files.
+- Connect an Android device or start an emulator and run the app.
 
-###Authentication Setup
--Ensure you have configured Firebase Authentication in the Firebase Console. Enable Google Sign-In and any other authentication providers you plan to use.
+### Authentication Setup
+- Ensure you have configured Firebase Authentication in the Firebase Console. Enable Google Sign-In and any other authentication providers you plan to use.
 
-###Database Setup
--Configure Firebase Realtime Database rules and structure according to your project needs.
+### Database Setup
+- Configure Firebase Realtime Database rules and structure according to your project needs.
 
 ##Contributing
 If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes.
