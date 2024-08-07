@@ -12,8 +12,8 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
 
 ### Traveler Companion
 - **Track Ride**: Track the ride of the traveler in real-time.
-- **Trip Completion Notification**: Receive notifications when the trip is complete.
-- **Geofence Notification**: Get notifications when the cab enters the geofence of the traveler’s drop location.
+- **Trip Completion Notification**: Receive notifications when the trip is complete.(not implemented)
+- **Geofence Notification**: Get notifications when the cab enters the geofence of the traveler’s drop location.(not implemented)
 - **Feedback Sharing**: Share feedback about the experience with the Admin.
 
 ### Admin
