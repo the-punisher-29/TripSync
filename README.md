@@ -35,34 +35,38 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
 
 
 ## Cloning the Repository
-```bash
-git clone https://github.com/the-punisher-29/TripSync.git
-cd TripSync
+ ```bash
+    git clone https://github.com/the-punisher-29/TripSync.git
+    cd TripSync
+ ```
 
 
-Configuring Firebase
-Create a Firebase Project
-Go to the Firebase Console.
-Create a new project if you haven’t already.
-Add Your App to Firebase
-In the Firebase Console, select your project.
-Click on the “Add app” button.
-Choose the Android platform and follow the instructions to register your app.
-Download the google-services.json file and place it in the app/ directory of your Android project.
-Add Firebase Dependencies
-In your project-level build.gradle file, add the Google services classpath in the dependencies section:
+##Configuring Firebase
 
+###Create a Firebase Project
+-Go to the Firebase Console.
+-Create a new project if you haven’t already.
+###Add Your App to Firebase
+-In the Firebase Console, select your project.
+-Click on the “Add app” button.
+-Choose the Android platform and follow the instructions to register your app.
+-Download the google-services.json file and place it in the app/ directory of your Android project.
+###Add Firebase Dependencies
+-In your project-level build.gradle file, add the Google services classpath in the dependencies section:
+
+ ```bash
 gradle
-Copy code
 buildscript {
     dependencies {
         classpath 'com.google.gms:google-services:4.3.15'
     }
 }
+ ```
+
 In your app-level build.gradle file, apply the Google services plugin and add the Firebase dependencies:
 
+```bash
 gradle
-Copy code
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
@@ -71,15 +75,18 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.6.0'
 }
-Running the Project
-Open the project in Android Studio.
-Click “Sync Now” to sync Gradle files.
-Connect an Android device or start an emulator and run the app.
-Authentication Setup
-Ensure you have configured Firebase Authentication in the Firebase Console. Enable Google Sign-In and any other authentication providers you plan to use.
+ ```
 
-Database Setup
-Configure Firebase Realtime Database rules and structure according to your project needs.
+###Running the Project
+-Open the project in Android Studio.
+-Click “Sync Now” to sync Gradle files.
+-Connect an Android device or start an emulator and run the app.
 
-Contributing
+###Authentication Setup
+-Ensure you have configured Firebase Authentication in the Firebase Console. Enable Google Sign-In and any other authentication providers you plan to use.
+
+###Database Setup
+-Configure Firebase Realtime Database rules and structure according to your project needs.
+
+##Contributing
 If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes.
