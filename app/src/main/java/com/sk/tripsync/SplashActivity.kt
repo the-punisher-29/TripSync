@@ -22,7 +22,7 @@ class SplashActivity : AppCompatActivity() {
         android.os.Handler().postDelayed({
             startActivity(Intent(this, MainActivity::class.java))
             finish()
-        }, 3000) // Delay of 3 seconds
+        }, 1500) // Delay of 1.5 seconds
     }
 }
 

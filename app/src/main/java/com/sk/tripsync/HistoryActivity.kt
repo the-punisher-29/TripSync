@@ -35,7 +35,7 @@ class HistoryActivity : AppCompatActivity() {
             Trip("1", "Arman Gupta", "+1234567890", "CAB123", true),
             Trip("2", "Hritin Raj", "+0987654321", "CAB456", false),
             Trip("3", "Akash Jatt", "+0987654321", "CAB456", false),
-            Trip("4", "Gigga Nigaa", "+0987654321", "CAB456", false),
+            Trip("4", "Prem Kumar", "+0987654321", "CAB456", false),
             Trip("5", "Harsh Singh", "+0987654321", "CAB456", false),
             // Add more trips as needed
         )

@@ -21,21 +21,21 @@
         android:weightSum="2">
 
         <EditText
-            android:id="@+id/edit_from_longitude"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Longitude"
-            android:background="@android:color/white"
-            android:padding="8dp"
-            android:layout_marginEnd="4dp"/>
-
-        <EditText
             android:id="@+id/edit_from_latitude"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Latitude"
+            android:background="@android:color/white"
+            android:padding="8dp"
+            android:layout_marginEnd="4dp"/>
+
+        <EditText
+            android:id="@+id/edit_from_longitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Longitude"
             android:background="@android:color/white"
             android:padding="8dp"
             android:layout_marginStart="4dp"/>
@@ -61,21 +61,21 @@
         android:weightSum="2">
 
         <EditText
-            android:id="@+id/edit_to_longitude"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Longitude"
-            android:background="@android:color/white"
-            android:padding="8dp"
-            android:layout_marginEnd="4dp"/>
-
-        <EditText
             android:id="@+id/edit_to_latitude"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="Latitude"
+            android:background="@android:color/white"
+            android:padding="8dp"
+            android:layout_marginEnd="4dp"/>
+
+        <EditText
+            android:id="@+id/edit_to_longitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Longitude"
             android:background="@android:color/white"
             android:padding="8dp"
             android:layout_marginStart="4dp"/>

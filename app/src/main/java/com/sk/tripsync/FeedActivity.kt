@@ -25,11 +25,12 @@ class FeedActivity : AppCompatActivity() {
             val toLongitude = editToLongitude.text.toString().toDoubleOrNull()
 
             if (fromLatitude != null && fromLongitude != null && toLatitude != null && toLongitude != null) {
-                val intent = Intent(this@FeedActivity, TravelerActivity::class.java)
-                intent.putExtra("START_LATITUDE", fromLatitude)
-                intent.putExtra("START_LONGITUDE", fromLongitude)
-                intent.putExtra("END_LATITUDE", toLatitude)
-                intent.putExtra("END_LONGITUDE", toLongitude)
+                val intent = Intent(this@FeedActivity, TravelerActivity::class.java).apply {
+                    putExtra("START_LATITUDE", fromLatitude)
+                    putExtra("START_LONGITUDE", fromLongitude)
+                    putExtra("END_LATITUDE", toLatitude)
+                    putExtra("END_LONGITUDE", toLongitude)
+                }
                 startActivity(intent)
             }
         }

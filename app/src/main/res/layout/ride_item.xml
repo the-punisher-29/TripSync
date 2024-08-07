@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/text_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name: John Doe"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/text_start_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start: Location A - End: Location B"/>
+
+    <TextView
+        android:id="@+id/text_fare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fare: $20"/>
+
+    <TextView
+        android:id="@+id/text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date: 2024-08-07"/>
+
+</LinearLayout>

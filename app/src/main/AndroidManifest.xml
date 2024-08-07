@@ -41,6 +41,12 @@
             android:name=".HistoryActivity"
             android:exported="true" />
 
+        <!-- Rides Activity -->
+        <activity android:name=".RidesActivity" />
+
+        <!-- Review Activity -->
+        <activity android:name=".ReviewActivity" />
+
     </application>
 
 </manifest>

@@ -1,30 +1,33 @@
 package com.sk.tripsync
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import org.json.JSONObject
 import org.osmdroid.api.IMapController
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.math.*
-import android.graphics.Color
-import org.osmdroid.util.BoundingBox
-
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
+import kotlin.math.sqrt
 
 private fun getBoundingBox(geoPoints: List<GeoPoint>): BoundingBox {
     val minLat = geoPoints.minOf { it.latitude }
@@ -35,11 +38,29 @@ private fun getBoundingBox(geoPoints: List<GeoPoint>): BoundingBox {
     return BoundingBox(maxLat, maxLon, minLat, minLon)
 }
 
+interface OpenRouteServiceApi {
+    @GET("v2/directions/driving-car")
+    fun getDirections(
+        @Query("api_key") apiKey: String,
+        @Query("start") start: String,
+        @Query("end") end: String
+    ): Call<DirectionsResponse>
+}
 
 class TravelerActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private val OPEN_ROUTE_SERVICE_API_KEY = "5b3ce3597851110001cf6248cb359a7eb3e34fae854bc8397565d55d"
+    private val TAG = "TravelerActivity"
+    private val NUMBER_OF_CABS = 7
+
+    private val service: OpenRouteServiceApi by lazy {
+        Retrofit.Builder()
+            .baseUrl("https://api.openrouteservice.org/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(OpenRouteServiceApi::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,15 +81,27 @@ class TravelerActivity : AppCompatActivity() {
         mapController.setCenter(patna)
         mapController.setZoom(13.0)
 
-        // Example start and end points
-        val startPoint = GeoPoint(25.5941, 85.1376) // Replace with your start coordinates
-        val endPoint = GeoPoint(25.5960, 85.1380)   // Replace with your end coordinates
+        // Retrieve coordinates from intent
+        val fromLatitude = intent.getDoubleExtra("START_LATITUDE", 0.0)
+        val fromLongitude = intent.getDoubleExtra("START_LONGITUDE", 0.0)
+        val toLatitude = intent.getDoubleExtra("END_LATITUDE", 0.0)
+        val toLongitude = intent.getDoubleExtra("END_LONGITUDE", 0.0)
 
-        // Fetch and display route
-        fetchRoute(startPoint, endPoint)
+        if (fromLatitude != 0.0 && fromLongitude != 0.0 && toLatitude != 0.0 && toLongitude != 0.0) {
+            val startPoint = GeoPoint(fromLatitude, fromLongitude)
+            val endPoint = GeoPoint(toLatitude, toLongitude)
 
-        // Place a dummy location and create some dummy cab pins
-        placeDummyLocationAndCabs(patna)
+            // Place markers and fetch route
+            placeMarker(startPoint, "Start Point")
+            placeMarker(endPoint, "Destination")
+            fetchRoute(startPoint, endPoint)
+
+            // Generate and display cabs
+            val cabs = generateDummyCabs(startPoint)
+            displayCabs(cabs, startPoint)
+        } else {
+            Toast.makeText(this, "Invalid coordinates provided", Toast.LENGTH_SHORT).show()
+        }
 
         // Set up buttons
         val buttonFeed: Button = findViewById(R.id.button_feed)
@@ -85,121 +118,60 @@ class TravelerActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchRoute(start: GeoPoint, end: GeoPoint) {
-        Thread {
-            try {
-                val url = URL(
-                    "https://api.openrouteservice.org/v2/directions/driving-car?api_key=$OPEN_ROUTE_SERVICE_API_KEY" +
-                            "&start=${start.longitude},${start.latitude}" +
-                            "&end=${end.longitude},${end.latitude}"
-                )
-                val connection = url.openConnection() as HttpURLConnection
-                connection.requestMethod = "GET"
-                connection.setRequestProperty("Content-Type", "application/json")
+    private fun fetchRoute(pickup: GeoPoint, destination: GeoPoint) {
+        val call = service.getDirections(
+            OPEN_ROUTE_SERVICE_API_KEY,
+            "${pickup.longitude},${pickup.latitude}",
+            "${destination.longitude},${destination.latitude}"
+        )
 
-                val inStream = BufferedReader(InputStreamReader(connection.inputStream))
-                val response = StringBuilder()
-                var inputLine: String?
-                while (inStream.readLine().also { inputLine = it } != null) {
-                    response.append(inputLine)
-                }
-                inStream.close()
+        call.enqueue(object : Callback<DirectionsResponse> {
+            override fun onResponse(call: Call<DirectionsResponse>, response: Response<DirectionsResponse>) {
+                if (response.isSuccessful) {
+                    val directionsResponse = response.body()
+                    Log.d(TAG, "API Response: $directionsResponse")
+                    val coordinates = directionsResponse?.routes?.get(0)?.geometry?.coordinates
 
-                // Log the response for debugging
-                Log.d("API_RESPONSE", response.toString())
+                    if (coordinates != null) {
+                        val geoPoints: MutableList<GeoPoint> = ArrayList()
+                        for (coordinate in coordinates) {
+                            geoPoints.add(GeoPoint(coordinate[1], coordinate[0]))
+                        }
 
-                // Parse JSON response
-                val jsonResponse = JSONObject(response.toString())
-                if (jsonResponse.has("routes")) {
-                    val routes = jsonResponse.getJSONArray("routes")
-                    val coordinates = routes.getJSONObject(0).getJSONObject("geometry").getJSONArray("coordinates")
-
-                    val geoPoints: MutableList<GeoPoint> = ArrayList()
-                    for (i in 0 until coordinates.length()) {
-                        val point = coordinates.getJSONArray(i)
-                        geoPoints.add(GeoPoint(point.getDouble(1), point.getDouble(0)))
-                    }
-
-                    // Draw the route on the map
-                    runOnUiThread {
+                        // Draw the route on the map
                         val polyline = Polyline()
                         polyline.setPoints(geoPoints)
-                        polyline.outlinePaint.color = Color.BLUE // Set the color to blue
-                        polyline.outlinePaint.strokeWidth = 5f // Set a reasonable width for visibility
+                        polyline.outlinePaint.color = Color.BLUE
+                        polyline.outlinePaint.strokeWidth = 5f
                         mapView.overlays.add(polyline)
                         mapView.invalidate()
 
                         // Adjust the map to fit the route
-                        val boundingBox = BoundingBox(
-                            geoPoints.maxOf { it.latitude },
-                            geoPoints.maxOf { it.longitude },
-                            geoPoints.minOf { it.latitude },
-                            geoPoints.minOf { it.longitude }
-                        )
+                        val boundingBox = BoundingBox.fromGeoPoints(geoPoints)
                         mapView.zoomToBoundingBox(boundingBox, true)
+                    } else {
+                        Log.e(TAG, "No coordinates found in the response")
                     }
                 } else {
-                    Log.e("API_ERROR", "No routes found in the response")
+                    Log.e(TAG, "API call failed with response code: ${response.code()}")
                 }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-        }.start()
-    }
-    private fun placeDummyLocationAndCabs(dummyLocation: GeoPoint) {
-        val locationIcon = resizeDrawable(resources.getDrawable(R.drawable.default_location_icon, null), 32, 32)
-        val cabIcon = resizeDrawable(resources.getDrawable(R.drawable.default_cab_icon, null), 32, 32)
 
-        val dummyMarker = Marker(mapView)
-        dummyMarker.position = dummyLocation
-        dummyMarker.icon = locationIcon
-        dummyMarker.title = "Dummy Location"
-        mapView.overlays.add(dummyMarker)
-
-        val cabs = mutableListOf<GeoPoint>()
-        for (i in 1 until 5) {
-            val latOffset = (Math.random() - 0.5) * 0.02
-            val lonOffset = (Math.random() - 0.5) * 0.02
-            val cabLocation = GeoPoint(dummyLocation.latitude + latOffset, dummyLocation.longitude + lonOffset)
-            cabs.add(cabLocation)
-            val cabMarker = Marker(mapView)
-            cabMarker.position = cabLocation
-            cabMarker.icon = cabIcon
-            cabMarker.title = "Cab $i"
-            mapView.overlays.add(cabMarker)
-        }
-
-        val closestCab = findClosestCab(dummyLocation, cabs)
-        if (closestCab != null) {
-            val marker = Marker(mapView)
-            marker.position = closestCab
-            marker.icon = resizeDrawable(resources.getDrawable(R.drawable.default_cab_icon, null), 32, 32)
-            marker.title = "Closest Cab"
-            mapView.overlays.add(marker)
-
-            // Track route between user location and closest cab
-            trackRouteBetweenUserAndCab(dummyLocation, closestCab)
-        }
-    }
-
-    private fun trackRouteBetweenUserAndCab(userLocation: GeoPoint, closestCab: GeoPoint) {
-        fetchRoute(userLocation, closestCab)
-    }
-
-    private fun findClosestCab(dummyLocation: GeoPoint, cabs: List<GeoPoint>): GeoPoint? {
-        var closestCab: GeoPoint? = null
-        var shortestDistance = Double.MAX_VALUE
-
-        for (cab in cabs) {
-            val distance = dummyLocation.distanceToAsDouble(cab)
-            if (distance < shortestDistance) {
-                shortestDistance = distance
-                closestCab = cab
+            override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
+                Log.e(TAG, "API call failed: ${t.message}")
             }
-        }
-        return closestCab
+        })
     }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private fun placeMarker(location: GeoPoint, title: String, icon: Drawable? = null) {
+        val marker = Marker(mapView)
+        marker.position = location
+        marker.icon = icon ?: resizeDrawable(resources.getDrawable(R.drawable.default_location_icon, null), 32, 32) // Default icon if none provided
+        marker.title = title
+        mapView.overlays.add(marker)
+    }
+
 
     private fun resizeDrawable(drawable: Drawable, widthDp: Int, heightDp: Int): Drawable {
         val widthPx = (widthDp * resources.displayMetrics.density).toInt()
@@ -211,6 +183,57 @@ class TravelerActivity : AppCompatActivity() {
         drawable.draw(canvas)
 
         return BitmapDrawable(resources, bitmap)
+    }
+
+    private fun generateDummyCabs(center: GeoPoint): List<GeoPoint> {
+        val cabs = mutableListOf<GeoPoint>()
+        val random = java.util.Random()
+        for (i in 1..NUMBER_OF_CABS) {
+            val latOffset = random.nextDouble() * 0.01 - 0.005
+            val lonOffset = random.nextDouble() * 0.01 - 0.005
+            val cabLocation = GeoPoint(center.latitude + latOffset, center.longitude + lonOffset)
+            cabs.add(cabLocation)
+        }
+        return cabs
+    }
+
+    private fun displayCabs(cabs: List<GeoPoint>, startPoint: GeoPoint) {
+        // Use the correct drawable for cab markers
+        val cabMarkerIcon = resizeDrawable(resources.getDrawable(R.drawable.default_cab_icon, null), 32, 32)
+
+        var closestCab: GeoPoint? = null
+        var minDistance = Double.MAX_VALUE
+
+        for (cab in cabs) {
+            placeMarker(cab, "Cab", cabMarkerIcon) // Pass the correct icon for cabs
+            val distance = calculateDistance(startPoint, cab)
+            if (distance < minDistance) {
+                minDistance = distance
+                closestCab = cab
+            }
+        }
+
+        closestCab?.let {
+            // Use the same icon for the closest cab as for other cabs
+            placeMarker(it, "Closest Cab", cabMarkerIcon)
+            Toast.makeText(this, "Closest cab is at: ${it.latitude}, ${it.longitude}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+
+    private fun calculateDistance(point1: GeoPoint, point2: GeoPoint): Double {
+        val earthRadius = 6371e3 // Earth radius in meters
+        val lat1 = Math.toRadians(point1.latitude)
+        val lat2 = Math.toRadians(point2.latitude)
+        val deltaLat = Math.toRadians(point2.latitude - point1.latitude)
+        val deltaLon = Math.toRadians(point2.longitude - point1.longitude)
+
+        val a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                Math.cos(lat1) * Math.cos(lat2) *
+                Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2)
+        val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+        return earthRadius * c // Distance in meters
     }
 
     override fun onResume() {
@@ -228,4 +251,3 @@ class TravelerActivity : AppCompatActivity() {
         mapView.onDetach()
     }
 }
-
