@@ -56,7 +56,7 @@ interface OpenRouteServiceApi {
 class TravelerActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
-    private val OPEN_ROUTE_SERVICE_API_KEY = "YOUR_API_KEY"
+    private val OPEN_ROUTE_SERVICE_API_KEY = "5b3ce3597851110001cf6248cb359a7eb3e34fae854bc8397565d55d"
     private val TAG = "TravelerActivity"
     private val NUMBER_OF_CABS = 7
     private val trips = mutableMapOf<String, Pair<GeoPoint, GeoPoint>>()
