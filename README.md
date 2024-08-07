@@ -91,5 +91,5 @@ dependencies {
 ### Database Setup
 - Configure Firebase Realtime Database rules and structure according to the project needs.
 
-##Contributing
-If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes.
+## Contributing
+- If you would like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes.
