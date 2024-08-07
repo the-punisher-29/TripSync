@@ -34,27 +34,27 @@ This project is a Ride-Sharing Platform developed using Kotlin for Android and F
 - Firebase Project Setup
 
 
-## Cloning the Repository
+### Cloning the Repository
  ```bash
     git clone https://github.com/the-punisher-29/TripSync.git
     cd TripSync
  ```
 
 
-## Configuring Firebase
+### Configuring Firebase
 
-### Create a Firebase Project
+#### Create a Firebase Project
 - Go to the Firebase Console.
 - Create a new project if you haven’t already.
 
-### Add the App to Firebase
+#### Add the App to Firebase
 
 - In the Firebase Console, select your project.
 - Click on the “Add app” button.
 - Choose the Android platform and follow the instructions to register the app.
 - Download the google-services.json file and place it in the app/ directory of the Android project.
 
-### Add Firebase Dependencies
+#### Add Firebase Dependencies
 - In the project-level build.gradle file, add the Google services classpath in the dependencies section:
 
  ```bash
